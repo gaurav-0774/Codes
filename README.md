@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # PRICEPILOT ✈️
 > **Compare Smarter. Buy Better.**
 
@@ -170,3 +171,7 @@ npm run build
 ---
 
 *Built with ❤️ for BCA Semester 3 Project.*
+=======
+# Codes
+student codex
+>>>>>>> 877a8207c99dc9a912b812b35dcfdc0243427306
