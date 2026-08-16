@@ -1,0 +1,166 @@
+// PricePilot Database Schema
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("USER") // USER or ADMIN
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  reviews        Review[]
+  wishlists      Wishlist[]
+  recentlyViewed RecentlyViewed[]
+
+  @@map("users")
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  image       String?
+  createdAt   DateTime @default(now())
+
+  products Product[]
+
+  @@map("categories")
+}
+
+model Brand {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  slug      String   @unique
+  logo      String?
+  createdAt DateTime @default(now())
+
+  products Product[]
+
+  @@map("brands")
+}
+
+model Product {
+  id             String   @id @default(uuid())
+  name           String
+  slug           String   @unique
+  description    String
+  brandId        String
+  categoryId     String
+  image          String
+  rating         Float    @default(0)
+  reviewCount    Int      @default(0)
+  specifications String   // JSON stringified structured specs
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  brand          Brand            @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  category       Category         @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  prices         Price[]
+  priceHistories PriceHistory[]
+  reviews        Review[]
+  wishlists      Wishlist[]
+  recentlyViewed RecentlyViewed[]
+
+  @@map("products")
+}
+
+model Store {
+  id        String   @id @default(uuid())
+  name      String
+  website   String?
+  logo      String?
+  address   String
+  city      String
+  latitude  Float
+  longitude Float
+  rating    Float    @default(4.5)
+  createdAt DateTime @default(now())
+
+  prices         Price[]
+  priceHistories PriceHistory[]
+
+  @@map("stores")
+}
+
+model Price {
+  id            String   @id @default(uuid())
+  productId     String
+  storeId       String
+  price         Float
+  originalPrice Float
+  discount      Float    @default(0)
+  availability  String   @default("In Stock")
+  deliveryText  String   @default("Standard Delivery")
+  productUrl    String
+  lastUpdated   DateTime @default(now()) @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  store   Store   @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, storeId])
+  @@map("prices")
+}
+
+model PriceHistory {
+  id         String   @id @default(uuid())
+  productId  String
+  storeId    String
+  price      Float
+  recordedAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  store   Store   @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@map("price_histories")
+}
+
+model Review {
+  id           String   @id @default(uuid())
+  productId    String
+  userId       String
+  rating       Int
+  title        String
+  content      String
+  helpfulCount Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
+}
+
+model Wishlist {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@map("wishlists")
+}
+
+model RecentlyViewed {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
+  viewedAt  DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("recently_viewed")
+}

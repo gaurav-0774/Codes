@@ -1,0 +1,35 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        brand: {
+          50: '#f0f7ff',
+          100: '#e0effe',
+          200: '#bae0fd',
+          300: '#7cc8fc',
+          400: '#36aef7',
+          500: '#0c92eb',
+          600: '#0074ce',
+          700: '#015da8',
+          800: '#064f8b',
+          900: '#0b4273',
+          950: '#072a4c',
+        },
+        slate: {
+          850: '#131e32',
+          950: '#0a0f1d'
+        }
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+      },
+    },
+  },
+  plugins: [],
+}
